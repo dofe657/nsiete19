@@ -12,13 +12,13 @@ def load_dataset(path):
         data.append(img)
     return np.asarray(data)
 
-#path = '../../data/processed/'
-path = '../../data/sranda/'
+path = '../../data/processed/'
+#path = '../../data/sranda/'
 dataMale = load_dataset(path+'male/')
 dataMaleTest = load_dataset(path+'testMale/')
 dataMaleComplete = np.vstack((dataMale,dataMaleTest))
 dataFemale = load_dataset(path+'female/')
 dataFemaleTest = load_dataset(path+'testFemale/')
 dataFemaleComplete = np.vstack((dataFemale,dataFemaleTest))
-#np.savez_compressed('genderswap.npz',dataMaleComplete,dataFemaleComplete)
-np.savez_compressed('genderswaptest.npz',dataMaleComplete,dataFemaleComplete)
+np.savez_compressed('genderswap.npz',dataMaleComplete,dataFemaleComplete)
+#np.savez_compressed('genderswaptest.npz',dataMaleComplete,dataFemaleComplete)

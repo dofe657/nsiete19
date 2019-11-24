@@ -19,7 +19,7 @@ def update_image_pool(pool, images, max_size=50):
 	return asarray(selected)
 
 def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset):
-	n_epochs, n_batch, = 100, 1
+	n_epochs, n_batch, = 5, 1
 	n_patch = d_model_A.output_shape[1]
 	trainA, trainB = dataset
 	poolA, poolB = list(), list()
@@ -54,12 +54,12 @@ def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_mode
 			summarize_performance(i, g_model_AtoB, trainA, 'AtoB')
 
 			summarize_performance(i, g_model_BtoA, trainB, 'BtoA')
-		if (i+1) % (bat_per_epo * 5) == 0:
-
+		if (i+1) % (bat_per_epo / 10) == 0:
+            
 			save_models(i, g_model_AtoB, g_model_BtoA)
 
 
-dataset = load_real_samples('../data/genderswaptest.npz')
+dataset = load_real_samples('../data/genderswap.npz')
 print('Loaded', dataset[0].shape, dataset[1].shape)
 
 image_shape = dataset[0].shape[1:]
