@@ -47,7 +47,7 @@ def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_mode
 	n_steps = int(len(trainA) / n_batch)
 
 	for i in range(n_epochs):
-
+		print('Epoch:',i)
 		for j in range(n_steps):
 			step(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, trainA, trainB, n_batch, j, poolA, poolB, n_patch)
 		summarize_performance(i, g_model_AtoB, trainA, 'AtoB')
@@ -55,7 +55,7 @@ def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_mode
 		save_models(i, g_model_AtoB, g_model_BtoA)
 
 
-dataset = load_real_samples('../data/genderswaptest.npz')
+dataset = load_real_samples('../data/genderswap.npz')
 print('Loaded', dataset[0].shape, dataset[1].shape)
 
 image_shape = dataset[0].shape[1:]

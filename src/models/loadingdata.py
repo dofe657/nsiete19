@@ -23,14 +23,14 @@ def generate_fake_samples(g_model, dataset, patch_shape):
     Y = zeros((len(X),patch_shape,patch_shape,1))
     return X, Y
 
-def save_models(step, g_model_AtoB, g_model_BtoA):
+def save_models(epoch, g_model_AtoB, g_model_BtoA):
     path = '../../models/'
-    filename1 = 'g_model_AtoB_%06d.h5' % (step+1)
+    filename1 = 'g_model_AtoB_%03d.h5' % (epoch+1)
     g_model_AtoB.save(path+filename1)
-    filename2 = 'g_model_BtoA_%06d.h5' % (step+1)
+    filename2 = 'g_model_BtoA_%03d.h5' % (epoch+1)
     g_model_BtoA.save(path+filename2)
 
-def summarize_performance(step, g_model, trainX, name, n_samples=5):
+def summarize_performance(epoch, g_model, trainX, name, n_samples=5):
     path = '../../models/'
     X_in, _ = generate_real_samples(trainX, n_samples, 0)
     X_out, _ = generate_fake_samples(g_model, X_in, 0)
@@ -44,6 +44,6 @@ def summarize_performance(step, g_model, trainX, name, n_samples=5):
         pyplot.subplot(2, n_samples, 1 + n_samples + i)
         pyplot.axis('off')
         pyplot.imshow(X_out[i])
-    filename1 = '%s_generated_plot_%06d.png' % (name, (step+1))
+    filename1 = '%s_generated_plot_%03d.png' % (name, (epoch+1))
     pyplot.savefig(path+filename1)
     pyplot.close()
