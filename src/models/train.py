@@ -39,26 +39,26 @@ def step(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model
 	dB_loss2 = d_model_B.train_on_batch(X_fakeB, y_fakeB)
 	print('Step: ',i+1, '\ndA[',dA_loss1,dA_loss2,']\ndB[',dB_loss1,dB_loss2,']\ng[',g_loss1,g_loss2,']\n-------------------------')
 
-def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset):
-	n_epochs, n_batch, = 1, 10
+def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, domainA, domainB):
+	n_epochs, n_batch, = 5, 1
 	n_patch = d_model_A.output_shape[1]
-	trainA, trainB = dataset
+	#trainA, trainB = dataset
 	poolA, poolB = list(), list()
-	n_steps = int(len(trainA) / n_batch)
+	n_steps = int(len(domainA) / n_batch)
 
 	for i in range(n_epochs):
 		print('Epoch:',i)
 		for j in range(n_steps):
-			step(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, trainA, trainB, n_batch, j, poolA, poolB, n_patch)
-		summarize_performance(i, g_model_AtoB, trainA, 'AtoB')
-		summarize_performance(i, g_model_BtoA, trainB, 'BtoA')  
+			step(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, domainA, domainB, n_batch, j, poolA, poolB, n_patch)
+		summarize_performance(i, g_model_AtoB, domainA, 'AtoB')
+		summarize_performance(i, g_model_BtoA, domainB, 'BtoA')  
 		save_models(i, g_model_AtoB, g_model_BtoA)
 
 
-dataset = load_real_samples('../data/genderswap.npz')
-print('Loaded', dataset[0].shape, dataset[1].shape)
+domainA,domainB = load_dataset('D:/Skola/4.roc/NSIETE/dataset/try/')
+print('Loaded', domainA.shape, domainB.shape)
 
-image_shape = dataset[0].shape[1:]
+image_shape = domainA.shape[1:]
 
 g_model_AtoB = generator(image_shape)
 g_model_BtoA = generator(image_shape)
@@ -67,4 +67,4 @@ d_model_B = discriminator(image_shape)
 c_model_AtoB = composite_model(g_model_AtoB, d_model_B, g_model_BtoA, image_shape)
 c_model_BtoA = composite_model(g_model_BtoA, d_model_A, g_model_AtoB, image_shape)
 
-train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, dataset)
+train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, domainA, domainB)

@@ -1,16 +1,38 @@
 from numpy import load
 from numpy import ones
 from numpy import zeros
+from numpy import asarray
 from numpy.random import randint
 from matplotlib import pyplot
+from os import listdir
+from keras.preprocessing.image import img_to_array
+from keras.preprocessing.image import load_img
 
-def load_real_samples(filename):
-    data = load(filename)
-    X1, X2 = data['arr_0'], data['arr_1']
 
-    X1 = (X1 - 127.5) / 127.5
-    X2 = (X2 - 127.5) / 127.5
-    return [X1,X2]
+def load_dataset(path):
+    entriesA = listdir(path+'male/')
+    entriesB = listdir(path+'female/')
+    domainA = list()
+    domainB = list()
+    print('Loading male images')
+    lenA = len(entriesA)
+    lenB = len(entriesB)
+    i = 1
+    for e in entriesA:
+        if i % 5000 == 0:
+            print('Loaded: ',i,'images.')
+        img = load_img(path+'male/'+e)
+        img = img_to_array(img)
+        domainA.append(img)
+    print('Loading female images')
+    i = 1
+    for e in entriesB:
+        if i % 5000 == 0:
+            print('Loaded: ',i,'images.')
+        img = load_img(path+'female/'+e)
+        img = img_to_array(img)
+        domainB.append(img)
+    return asarray(domainA), asarray(domainB)
 
 def generate_real_samples(dataset,n_samples, patch_shape):
     ix = randint(0, dataset.shape[0],n_samples)
@@ -25,13 +47,13 @@ def generate_fake_samples(g_model, dataset, patch_shape):
 
 def save_models(epoch, g_model_AtoB, g_model_BtoA):
     path = '../../models/'
-    filename1 = 'g_model_AtoB_%03d.h5' % (epoch+1)
-    g_model_AtoB.save(path+filename1)
-    filename2 = 'g_model_BtoA_%03d.h5' % (epoch+1)
-    g_model_BtoA.save(path+filename2)
+    AtoB = 'g_model_AtoB_%03d.h5' % (epoch+1)
+    BtoA = 'g_model_BtoA_%03d.h5' % (epoch+1)
+    g_model_AtoB.save(path+AtoB)
+    g_model_BtoA.save(path+BtoA)
 
 def summarize_performance(epoch, g_model, trainX, name, n_samples=5):
-    path = '../../models/'
+    path = '../../performace/'
     X_in, _ = generate_real_samples(trainX, n_samples, 0)
     X_out, _ = generate_fake_samples(g_model, X_in, 0)
     X_in = (X_in + 1) / 2.0
