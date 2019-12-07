@@ -17,19 +17,32 @@ def load_dataset(path):
     print('Loading male images')
     lenA = len(entriesA)
     lenB = len(entriesB)
-    i = 1
     for e in entriesA:
-        if i % 5000 == 0:
-            print('Loaded: ',i,'images.')
         img = load_img(path+'male/'+e)
         img = img_to_array(img)
         domainA.append(img)
     print('Loading female images')
-    i = 1
     for e in entriesB:
-        if i % 5000 == 0:
-            print('Loaded: ',i,'images.')
         img = load_img(path+'female/'+e)
+        img = img_to_array(img)
+        domainB.append(img)
+    return asarray(domainA), asarray(domainB)
+
+def load_dataset_test(path):
+    entriesA = listdir(path+'testMale/')
+    entriesB = listdir(path+'testFemale/')
+    domainA = list()
+    domainB = list()
+    print('Loading male test images')
+    lenA = len(entriesA)
+    lenB = len(entriesB)
+    for e in entriesA:
+        img = load_img(path+'testMale/'+e)
+        img = img_to_array(img)
+        domainA.append(img)
+    print('Loading female test images')
+    for e in entriesB:
+        img = load_img(path+'testFemale/'+e)
         img = img_to_array(img)
         domainB.append(img)
     return asarray(domainA), asarray(domainB)
