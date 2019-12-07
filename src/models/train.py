@@ -29,8 +29,8 @@ def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_mode
 	for i in range(n_epochs):
 		print('Epoch:',i)
 		for j in range(n_steps):
-			X_realA, y_realA = generate_real_samples(trainA, n_batch, n_patch)
-			X_realB, y_realB = generate_real_samples(trainB, n_batch, n_patch)
+			X_realA, y_realA = generate_real_samples(domainA, n_batch, n_patch)
+			X_realB, y_realB = generate_real_samples(domainB, n_batch, n_patch)
 
 			X_fakeA, y_fakeA = generate_fake_samples(g_model_BtoA, X_realB, n_patch)
 			X_fakeB, y_fakeB = generate_fake_samples(g_model_AtoB, X_realA, n_patch)

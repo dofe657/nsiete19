@@ -66,7 +66,7 @@ def save_models(epoch, g_model_AtoB, g_model_BtoA):
     g_model_BtoA.save(path+BtoA)
 
 def summarize_performance(epoch, g_model, trainX, name, n_samples=5):
-    path = '../../performace/'
+    path = '../../performance/'
     X_in, _ = generate_real_samples(trainX, n_samples, 0)
     X_out, _ = generate_fake_samples(g_model, X_in, 0)
     X_in = (X_in + 1) / 2.0
