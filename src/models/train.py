@@ -16,28 +16,7 @@ def update_image_pool(pool, images, max_size=50):
 			ix = randint(0, len(pool))
 			selected.append(pool[ix])
 			pool[ix] = image
-	return asarray(selected)
-
-def step(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, trainA, trainB, n_batch, i, poolA, poolB, n_patch):
-	X_realA, y_realA = generate_real_samples(trainA, n_batch, n_patch)
-	X_realB, y_realB = generate_real_samples(trainB, n_batch, n_patch)
-
-	X_fakeA, y_fakeA = generate_fake_samples(g_model_BtoA, X_realB, n_patch)
-	X_fakeB, y_fakeB = generate_fake_samples(g_model_AtoB, X_realA, n_patch)
-
-	X_fakeA = update_image_pool(poolA, X_fakeA)
-	X_fakeB = update_image_pool(poolB, X_fakeB)
-
-	g_loss2, _, _, _, _  = c_model_BtoA.train_on_batch([X_realB, X_realA], [y_realA, X_realA, X_realB, X_realA])
-
-	dA_loss1 = d_model_A.train_on_batch(X_realA, y_realA)
-	dA_loss2 = d_model_A.train_on_batch(X_fakeA, y_fakeA)
-
-	g_loss1, _, _, _, _ = c_model_AtoB.train_on_batch([X_realA, X_realB], [y_realB, X_realB, X_realA, X_realB])
-
-	dB_loss1 = d_model_B.train_on_batch(X_realB, y_realB)
-	dB_loss2 = d_model_B.train_on_batch(X_fakeB, y_fakeB)
-	print('Step: ',i+1, '\ndA[',dA_loss1,dA_loss2,']\ndB[',dB_loss1,dB_loss2,']\ng[',g_loss1,g_loss2,']\n-------------------------')
+	return asarray(selected)	
 
 def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, domainA, domainB):
 	n_epochs, n_batch, = 5, 1
@@ -49,7 +28,26 @@ def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_mode
 	for i in range(n_epochs):
 		print('Epoch:',i)
 		for j in range(n_steps):
-			step(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, domainA, domainB, n_batch, j, poolA, poolB, n_patch)
+			X_realA, y_realA = generate_real_samples(trainA, n_batch, n_patch)
+			X_realB, y_realB = generate_real_samples(trainB, n_batch, n_patch)
+
+			X_fakeA, y_fakeA = generate_fake_samples(g_model_BtoA, X_realB, n_patch)
+			X_fakeB, y_fakeB = generate_fake_samples(g_model_AtoB, X_realA, n_patch)
+
+			X_fakeA = update_image_pool(poolA, X_fakeA)
+			X_fakeB = update_image_pool(poolB, X_fakeB)
+
+			g_loss2, _, _, _, _  = c_model_BtoA.train_on_batch([X_realB, X_realA], [y_realA, X_realA, X_realB, X_realA])
+
+			dA_loss1 = d_model_A.train_on_batch(X_realA, y_realA)
+			dA_loss2 = d_model_A.train_on_batch(X_fakeA, y_fakeA)
+
+			g_loss1, _, _, _, _ = c_model_AtoB.train_on_batch([X_realA, X_realB], [y_realB, X_realB, X_realA, X_realB])
+
+			dB_loss1 = d_model_B.train_on_batch(X_realB, y_realB)
+			dB_loss2 = d_model_B.train_on_batch(X_fakeB, y_fakeB)
+			print('Step: ',j+1, '\ndA[',dA_loss1,dA_loss2,']\ndB[',dB_loss1,dB_loss2,']\ng[',g_loss1,g_loss2,']\n-------------------------')
+			
 		summarize_performance(i, g_model_AtoB, domainA, 'AtoB')
 		summarize_performance(i, g_model_BtoA, domainB, 'BtoA')  
 		save_models(i, g_model_AtoB, g_model_BtoA)
