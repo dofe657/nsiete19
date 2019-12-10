@@ -24,18 +24,20 @@ def translate(domain, img, AtoB, BtoA):
         reconstructed = AtoB.predict(generated)
     return generated, reconstructed
 
-def show_translation(img, generated, reconstructed,path):
+def save_img(img, generated, reconstructed,path):
     images = vstack((img,generated,reconstructed))
     titles = ['Input','Generated','Reconstructed']
     images = (images + 1) / 2.0
-    for i in range(len(images)):
+    for i in range(len(images)):    
         pyplot.subplot(1,len(images),i+1)
         pyplot.axis('off')
         pyplot.imshow(images[i])
         pyplot.title(titles[i])
     pyplot.savefig(path+'translation.png')
 
-domainA,domainB = load_dataset('../../try/')
+# Generate translation with: python3 generate.py [name of AtoB model] [name of BtoA model] [picture to translate] [m/f]
+# Models should be placed in models folder in the repo and image to translate should be placed in translate folder in repo.
+
 path_models = '../../models/'
 path_image = '../../translate/'
 
@@ -46,4 +48,4 @@ BtoA = load_model(path_models+sys.argv[2],cust)
 img = image_to_translate(path_image+sys.argv[3])
 
 generated, reconstructed = translate(sys.argv[4],img,AtoB,BtoA)
-show_translation(img,generated,reconstructed,path_image)
+save_img(img,generated,reconstructed,path_image)
